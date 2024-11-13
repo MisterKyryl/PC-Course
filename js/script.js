@@ -49,6 +49,7 @@ setInterval(checkScrollAndMenu, 1000);
 // Ждем загрузку контента
 window.onload = function () {
 	const parallax = document.querySelector('.main');
+	
 	if (parallax) {
 		const content = document.querySelector('.main__container');
 		const parallaxOne = document.querySelector('.images-parallax-1');
@@ -74,22 +75,26 @@ window.onload = function () {
 			parallaxTwo.style.transform = `translate(${positionX / forParallaxTwo}%,${positionY / forParallaxTwo}%)`;
 			content.style.transform = `translate(0%, -${scrollTopProcent / 6}%)`;
 			parallaxTwo.parentElement.style.transform = `translate(0%, -${scrollTopProcent / 9}%)`;
-			// Повторяем анимацию
-			setTimeout(updateParallax, 16);  // примерно 60 кадров в секунду
+
+			// Повторяем анимацию с использованием requestAnimationFrame для оптимизации
+			requestAnimationFrame(updateParallax);
 		}
+
 		// Запуск анимации
 		updateParallax();
+
 		// Обработка движения мыши для параллакса
 		parallax.addEventListener("mousemove", (e) => {
 			const parallaxWidth = parallax.offsetWidth;
 			const parallaxHeight = parallax.offsetHeight;
 
-			const coordX = e.pageX - parallaxWidth / 2;
-			const coordY = e.pageY - parallaxHeight / 2;
+			const coordX = e.clientX - parallaxWidth / 2;
+			const coordY = e.clientY - parallaxHeight / 2;
 
 			coordXprocent = (coordX / parallaxWidth) * 100;
 			coordYprocent = (coordY / parallaxHeight) * 100;
 		});
+
 		// Обработка прокрутки для параллакса
 		window.addEventListener("scroll", () => {
 			scrollTopProcent = (window.scrollY / parallax.offsetHeight) * 100;
