@@ -55,70 +55,48 @@ window.onload = function () {
 		const parallaxOne = document.querySelector('.images-parallax-1');
 		const parallaxTwo = document.querySelector('.images-parallax-2');
 
-		// Коэффициенты
 		const forParallaxOne = 40;
 		const forParallaxTwo = 30;
-
-		// Скорость анимации
 		const speed = 0.05;
 
-		// Объявление переменных
 		let positionX = 0, positionY = 0;
 		let coordXprocent = 0, coordYprocent = 0;
+		let scrollTopProcent = 0;
 
-		// Анимация при изменение положении курсора мыши
-		function setMouseParallaxStyle() {
+		function setParallaxStyles() {
 			const distX = coordXprocent - positionX;
 			const distY = coordYprocent - positionY;
 
-			positionX = positionX + (distX * speed);
-			positionY = positionY + (distY * speed);
+			positionX += distX * speed;
+			positionY += distY * speed;
 
-			// Передаем стили
-			parallaxOne.style.cssText = `transform: translate(${positionX / forParallaxOne}%,${positionY / forParallaxOne}%);`;
-			parallaxTwo.style.cssText = `transform: translate(${positionX / forParallaxTwo}%,${positionY / forParallaxTwo}%);`;
+			parallaxOne.style.transform = `translate(${positionX / forParallaxOne}%,${positionY / forParallaxOne}%`;
+			parallaxTwo.style.transform = `translate(${positionX / forParallaxTwo}%,${positionY / forParallaxTwo}%`;
 
-			requestAnimationFrame(setMouseParallaxStyle);
+			content.style.transform = `translate(0%, -${scrollTopProcent / 6}%)`;
+			parallaxTwo.parentElement.style.transform = `translate(0%, -${scrollTopProcent / 9}%)`;
+
+			requestAnimationFrame(setParallaxStyles);
 		}
 
-		setMouseParallaxStyle();
+		setParallaxStyles();
 
-		parallax.addEventListener("mousemove", function (e) {
-			// Получение ширины и высоты блока
+		parallax.addEventListener("mousemove", (e) => {
 			const parallaxWidth = parallax.offsetWidth;
 			const parallaxHeight = parallax.offsetHeight;
 
-			// Ноль по середине
 			const coordX = e.pageX - parallaxWidth / 2;
 			const coordY = e.pageY - parallaxHeight / 2;
 
-			// Получаем проценты
-			coordXprocent = coordX / parallaxWidth * 100;
-			coordYprocent = coordY / parallaxHeight * 100;
+			coordXprocent = (coordX / parallaxWidth) * 100;
+			coordYprocent = (coordY / parallaxHeight) * 100;
 		});
 
-		// Parallax при скролле
-		let thresholdSets = [];
-		for (let i = 0; i <= 1.0; i += 0.005) {
-			thresholdSets.push(i);
-		}
-		const callback = function (entries, observer) {
-			const scrollTopProcent = window.scrollY / parallax.offsetHeight * 100;
-			setParallaxItemsStyle(scrollTopProcent);
-		};
-		const observer = new IntersectionObserver(callback, {
-			threshold: thresholdSets
+		window.addEventListener("scroll", () => {
+			scrollTopProcent = (window.scrollY / parallax.offsetHeight) * 100;
 		});
-
-		observer.observe(document.querySelector('.main'));
-		// Коэффициент при скролле
-		const setParallaxItemsStyle = function (scrollTopProcent) {
-			content.style.cssText = `transform: translate(0%,-${scrollTopProcent / 6}%);`;
-			parallaxTwo.parentElement.style.cssText = `transform: translate(0%,-${scrollTopProcent / 9}%);`;
-		};
 	}
 };
-
 /*=============== COUNTDOWN TIMER ===============*/
 document.addEventListener('DOMContentLoaded', () => {
 	// Задать дату
