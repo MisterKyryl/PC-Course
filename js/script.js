@@ -45,12 +45,6 @@ function checkScrollAndMenu() {
 
 // Вызываем функцию checkScrollAndMenu каждую секунду
 setInterval(checkScrollAndMenu, 1000);
-
-/*=============== VIDEO ===============*/
-document.addEventListener('DOMContentLoaded', function () {
-	document.querySelector('video').playbackRate = 2;
-});
-
 /*=============== Parallax ===============*/
 // Ждем загрузку контента
 window.onload = function () {
@@ -104,7 +98,6 @@ window.onload = function () {
 		});
 
 		// Parallax при скролле
-
 		let thresholdSets = [];
 		for (let i = 0; i <= 1.0; i += 0.005) {
 			thresholdSets.push(i);
@@ -129,7 +122,7 @@ window.onload = function () {
 /*=============== COUNTDOWN TIMER ===============*/
 document.addEventListener('DOMContentLoaded', () => {
 	// Задать дату
-	const date = new Date('Apr 1 2024 00:00:00');
+	const date = new Date('Nov 1 2024 00:00:00');
 
 	const daysVal = document.querySelector('.count-time__days .count-time__value');
 	const hoursVal = document.querySelector('.count-time__hours .count-time__value');
@@ -187,58 +180,28 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /*==================================================*/
-// Функция для перемещения и изменения классов при изменении размера окна
 function moveAndChangeClass() {
-	// Проверяем ширину экрана
+	const itemValue = document.querySelector('.fast__item.item-value');
+	const itemInfo = document.querySelector('.fast__item.item-info');
+	const values = document.querySelectorAll('.fast__value');
 	if (window.matchMedia('(max-width: 767.98px)').matches) {
-		// Находим блоки item-value и item-info
-		const itemValue = document.querySelector('.fast__item.item-value');
-		const itemInfo = document.querySelector('.fast__item.item-info');
-
-		// Находим все элементы с классом fast__value в блоке item-value
-		const values = itemValue.querySelectorAll('.fast__value');
-
-		// Перемещаем значения из item-value в item-info, сохраняя класс fast__value и добавляя класс fast-grid
 		values.forEach(value => {
-			// Создаем копию элемента для каждого значения
-			const newValue = value.cloneNode(true);
-			// Добавляем новый элемент в блок item-info
-			itemInfo.appendChild(newValue);
-		});
-
-		// Удаляем все элементы с классом fast__value из блока item-value
-		values.forEach(value => {
-			value.remove();
+			if (!itemInfo.contains(value)) {
+				itemInfo.appendChild(value);
+				value.classList.add('fast-grid');
+			}
 		});
 	} else {
-		// Ширина экрана выше 767.98px
-
-		// Находим блоки item-value и item-info
-		const itemValue = document.querySelector('.fast__item.item-value');
-		const itemInfo = document.querySelector('.fast__item.item-info');
-
-		// Находим все элементы с классом fast__value в блоке item-info
-		const values = itemInfo.querySelectorAll('.fast__value');
-
-		// Перемещаем значения из item-info в item-value, удаляя класс fast-grid
 		values.forEach(value => {
-			// Создаем копию элемента для каждого значения
-			const newValue = value.cloneNode(true);
-			// Добавляем новый элемент в блок item-value
-			itemValue.appendChild(newValue);
-		});
-
-		// Удаляем все элементы с классом fast__value из блока item-info
-		values.forEach(value => {
-			value.remove();
+			if (!itemValue.contains(value)) {
+				itemValue.appendChild(value);
+				value.classList.remove('fast-grid');
+			}
 		});
 	}
 }
-
-// Вызываем функцию при загрузке страницы и при изменении размера окна
 window.addEventListener('load', moveAndChangeClass);
 window.addEventListener('resize', moveAndChangeClass);
-
 /*=============== SWIPER SLIDER ===============*/
 const swiper = new Swiper('.partners__swiper', {
 	// Optional parameters
@@ -292,44 +255,21 @@ setInterval(updateHeight, 1000);
 window.addEventListener('load', updateHeight);
 
 /*=============== Scroll Animation ===============*/
-const animItems = document.querySelectorAll('._anim-items');
+document.addEventListener('DOMContentLoaded', () => {
+	const animItems = document.querySelectorAll('._anim-items');
 
-if (animItems.length > 0) {
-	// Запуск анимации с помощью события
-	window.addEventListener('scroll', animOnScroll);
-	function animOnScroll(params) {
-		for (let index = 0; index < animItems.length; index++) {
-			const animItem = animItems[index];
-			const animItemHeight = animItem.offsetHeight;
-			const animItemOffset = offset(animItem).top;
-			// Регулирует момент старта анимации
-			const animStart = 4;
-			
-			let animItemPoint = window.innerHeight - animItemHeight / animStart;
-			if (animItemHeight > window.innerHeight) {
-				animItemPoint = window.innerHeight - window.innerHeight / animStart;
-			}
-
-			if ((window.scrollY > animItemOffset - animItemPoint) && window.scrollY < (animItemOffset + animItemHeight)) {
-				// Время задержки анимации
-				setTimeout(() => {
-					animItem.classList.add('_active');
-				}, 300);
-			} else {
-				// _anim-no-hide убирает анимацию появления по кругу c помощью CSS
-				if (!animItem.classList.contains('_anim-no-hide')) {
-					// Повторяет анимацию по кругу /  если она не нужна, убираем animItem.classList.remove('_active');
-					// animItem.classList.remove('_active');
+	if (animItems.length > 0) {
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add('_active');
 				}
-			}
-		}
+			});
+		}, {
+			rootMargin: '0px 0px -100px 0px'
+		});
+
+		animItems.forEach(item => observer.observe(item));
 	}
-	function offset(el) {
-		const rect = el.getBoundingClientRect(),
-			scrollLeft = window.scrollX || document.documentElement.scrollLeft,
-			scrollTop = window.scrollY || document.documentElement.scrollTop;
-		return { top: rect.top + scrollTop, left: rect.left + scrollLeft };
-	}
-	// Активирует функцию без действия скролла (Чтобы анимация сработала сразу после загрузке страницы)
-	animOnScroll();
-}
+});
+
