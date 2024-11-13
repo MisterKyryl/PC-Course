@@ -49,7 +49,6 @@ setInterval(checkScrollAndMenu, 1000);
 // Ждем загрузку контента
 window.onload = function () {
 	const parallax = document.querySelector('.main');
-
 	if (parallax) {
 		const content = document.querySelector('.main__container');
 		const parallaxOne = document.querySelector('.images-parallax-1');
@@ -63,24 +62,24 @@ window.onload = function () {
 		let coordXprocent = 0, coordYprocent = 0;
 		let scrollTopProcent = 0;
 
-		function setParallaxStyles() {
+		// Функция для обновления параллакса
+		function updateParallax() {
 			const distX = coordXprocent - positionX;
 			const distY = coordYprocent - positionY;
 
 			positionX += distX * speed;
 			positionY += distY * speed;
-
-			parallaxOne.style.transform = `translate(${positionX / forParallaxOne}%,${positionY / forParallaxOne}%`;
-			parallaxTwo.style.transform = `translate(${positionX / forParallaxTwo}%,${positionY / forParallaxTwo}%`;
-
+			// Применение изменений для параллакса
+			parallaxOne.style.transform = `translate(${positionX / forParallaxOne}%,${positionY / forParallaxOne}%)`;
+			parallaxTwo.style.transform = `translate(${positionX / forParallaxTwo}%,${positionY / forParallaxTwo}%)`;
 			content.style.transform = `translate(0%, -${scrollTopProcent / 6}%)`;
 			parallaxTwo.parentElement.style.transform = `translate(0%, -${scrollTopProcent / 9}%)`;
-
-			requestAnimationFrame(setParallaxStyles);
+			// Повторяем анимацию
+			setTimeout(updateParallax, 16);  // примерно 60 кадров в секунду
 		}
-
-		setParallaxStyles();
-
+		// Запуск анимации
+		updateParallax();
+		// Обработка движения мыши для параллакса
 		parallax.addEventListener("mousemove", (e) => {
 			const parallaxWidth = parallax.offsetWidth;
 			const parallaxHeight = parallax.offsetHeight;
@@ -91,7 +90,7 @@ window.onload = function () {
 			coordXprocent = (coordX / parallaxWidth) * 100;
 			coordYprocent = (coordY / parallaxHeight) * 100;
 		});
-
+		// Обработка прокрутки для параллакса
 		window.addEventListener("scroll", () => {
 			scrollTopProcent = (window.scrollY / parallax.offsetHeight) * 100;
 		});
